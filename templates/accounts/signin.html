@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="">
+        <link rel="stylesheet"  href="{%  static  'css/style.css'  %}">
+    </head>
+    <body>
+        {% for message in messages %}            
+        <div class="container">
+            {% if user.is_authenticated %}
+            <div class="alert alert-danger alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Info!</strong> {{message}}.
+            </div>
+            {% endif %}
+            <div class="alert alert-danger alert-dismissible">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              <strong>Info! User Authentication Failed</strong>
+
+          </div>
+        </div>
+            
+        {% endfor %}
+        <h3>Sign In</h3>
+        <form action="signin" method ='post'>
+        {% csrf_token %}
+            <label for="">Username</label>
+            <input type="text" id='username' name='username' placeholder="Enter your Username" Required>
+            <br>
+            <label for="">Password</label>
+            <input type="password" id='pass1' name='pass1' placeholder="Enter Your Password" Required>
+            <br>
+            <div class="form-group">
+                <video id="stream" width="370" height="320">
+                    <canvas id="capture" width="370" height="320">
+                    </canvas>
+                  </video>
+                  <br>
+                    <button id="btn-capture" type="button" >Capture Image</button>
+                <br><br>
+                    <div id="snapshot"></div>
+                <input type="hidden" id="image_hidden" name="image_hidden" Required>
+                </div>
+            <button type="submit" class="btn btn-primary justify-content-center">Sign In</button>
+        </form>
+        <script src="" async defer></script>
+      
+    </body>
+    
+</html>
+
+<script>
+    // The buttons to start & stop stream and to capture the image
+    //var btnStart = document.getElementById( "btn-start" );
+    //var btnStop = document.getElementById( "btn-stop" );
+    var btnCapture = document.getElementById( "btn-capture" );
+
+    // The stream & capture
+    var stream = document.getElementById( "stream" );
+    var capture = document.getElementById( "capture" );
+    var snapshot = document.getElementById( "snapshot" );
+    
+    // The video stream
+    var cameraStream = null;
+    
+    btnCapture.addEventListener( "click", captureSnapshot );
+
+    // Attach listeners
+    
+    // Start Streaming
+    function startStreaming() {
+    
+      var mediaSupport = 'mediaDevices' in navigator;
+
+      if( mediaSupport && null == cameraStream ) {
+    
+        navigator.mediaDevices.getUserMedia( { video: true } )
+        .then( function( mediaStream ) {
+    
+          cameraStream = mediaStream;
+    
+          stream.srcObject = mediaStream;
+    
+          stream.play();
+        })
+        .catch( function( err ) {
+          console.log( "Unable to access camera: " + err );
+
+        });
+      }
+      else {
+        alert( 'Your browser does not support media devices.' );
+        return;
+      }
+    }
+    
+    // Stop Streaming
+    function stopStreaming() {
+    
+      if( null != cameraStream ) {
+    
+        var track = cameraStream.getTracks()[ 0 ];
+    
+        track.stop();
+        stream.load();
+    
+        cameraStream = null;
+      }
+    }
+    
+    function captureSnapshot() {
+    
+      if( null != cameraStream ) {
+    
+        var ctx = capture.getContext( '2d' );
+        var img = new Image();
+    
+        ctx.drawImage( stream, 0, 0, capture.width, capture.height );
+      
+        img.src		= capture.toDataURL( "image/png" );
+        img.width	= 370;
+        img.height	= 320;
+        //console.log(capture.toDataURL( "image/png" ));
+        snapshot.innerHTML = '';
+    
+        snapshot.appendChild( img );
+        var d1 = capture.toDataURL("image/png");
+        var res = d1.replace("data:image/png;base64,", "");
+        console.log(res);
+        snapshot.innerHTML = '';
+        snapshot.appendChild( img );
+        $("#image_hidden").val(res)    
+
+      }
+    }
+    window.onload = function() {
+       startStreaming();
+       captureSnapshot();
+    }
+    
+</script>

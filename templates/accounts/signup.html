@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+    {% block content %}
+    {% load static %}
+    <head>
+        <title>VisionApp</title>
+        <meta charset='utf-8'>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css" media="all">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- <script type="module" src="{% static 'js/index.js' %}"></script> -->
+    </head>
+    <body>
+        <div class="contentarea">
+            <div class="Input">
+                <form method="POST" name="inputForm" enctype='multipart/form-data'>
+                    {% csrf_token %}
+                    <label for="">Username</label>
+                    <input type="text" id='username' name='username' placeholder="Create a username(only letters and numbers)" Required>
+                    <br>
+                    <label for="">First Name</label>
+                    <input type="text" id='fname' name='fname' placeholder="Enter Your First Name" Required>
+                    <br>
+                    <label for="">Last Name</label>
+                    <input type="text" id='lname' name='lname' placeholder="Enter Your Last Name" Required>
+                    <br>
+                    <label for="">Email</label>
+                    <input type="email" id='email' name='email' placeholder="Enter Your Email" Required>
+                    <br>
+                    <label for="">Create Password</label>
+                    <input type="password" id='pass1' name='pass1' placeholder="Create Your Password" Required>
+                    <br>
+                    <label for="">Confirm Password</label>
+                    <input type="password" id='pass2' name='pass2' placeholder="Confirm Your Password" Required>
+                    <br>
+
+                    <div class="form-group">
+                        <video id="stream" width="370" height="320">
+                            <canvas id="capture" width="370" height="320">
+                            </canvas>
+                          </video>
+                          <br>
+                            <button id="btn-capture" type="button" class="btn btn-primary justify-content-center">Capture Image</button>
+                        <br><br>
+                            <div id="snapshot"></div>
+                        <input type="hidden" id="image_hidden" name="image_hidden" required>
+                        </div>
+                    <br>
+                    <button type="submit" class="button" id="submit">Submit</button>
+                </form>
+                <p>Already have an account?
+                  <a href="/signin" >Click here</a>.
+                </p>
+            </div>
+        </div>
+    </body>
+    {% endblock %}
+</html>
+
+
+
+<script>
+    // The buttons to start & stop stream and to capture the image
+    //var btnStart = document.getElementById( "btn-start" );
+    //var btnStop = document.getElementById( "btn-stop" );
+    var btnCapture = document.getElementById( "btn-capture" );
+
+    // The stream & capture
+    var stream = document.getElementById( "stream" );
+    var capture = document.getElementById( "capture" );
+    var snapshot = document.getElementById( "snapshot" );
+    
+    // The video stream
+    var cameraStream = null;
+    
+    btnCapture.addEventListener( "click", captureSnapshot );
+
+    // Attach listeners
+    
+    // Start Streaming
+    function startStreaming() {
+    
+      var mediaSupport = 'mediaDevices' in navigator;
+
+      if( mediaSupport && null == cameraStream ) {
+    
+        navigator.mediaDevices.getUserMedia( { video: true } )
+        .then( function( mediaStream ) {
+    
+          cameraStream = mediaStream;
+    
+          stream.srcObject = mediaStream;
+    
+          stream.play();
+        })
+        .catch( function( err ) {
+          console.log( "Unable to access camera: " + err );
+
+        });
+      }
+      else {
+        alert( 'Your browser does not support media devices.' );
+        return;
+      }
+    }
+    
+    // Stop Streaming
+    function stopStreaming() {
+    
+      if( null != cameraStream ) {
+    
+        var track = cameraStream.getTracks()[ 0 ];
+    
+        track.stop();
+        stream.load();
+    
+        cameraStream = null;
+      }
+    }
+    
+    function captureSnapshot() {
+    
+      if( null != cameraStream ) {
+    
+        var ctx = capture.getContext( '2d' );
+        var img = new Image();
+    
+        ctx.drawImage( stream, 0, 0, capture.width, capture.height );
+      
+        img.src		= capture.toDataURL( "image/png" );
+        img.width	= 370;
+        img.height	= 320;
+        //console.log(capture.toDataURL( "image/png" ));
+        snapshot.innerHTML = '';
+    
+        snapshot.appendChild( img );
+        var d1 = capture.toDataURL("image/png");
+        var res = d1.replace("data:image/png;base64,", "");
+        console.log(res);
+        snapshot.innerHTML = '';
+        snapshot.appendChild( img );
+        $("#image_hidden").val(res)    
+
+      }
+    }
+    window.onload = function() {
+       startStreaming();
+       captureSnapshot();
+    }
+    
+</script>
