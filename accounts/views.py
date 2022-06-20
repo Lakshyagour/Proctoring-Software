@@ -68,4 +68,17 @@ def signin(request):
 
 
 def home(request):
+
+    if not request.user.is_authenticated:
+        render(request, 'accounts/dashboard.html')
+
+    user = request.user
+    logging.debug(f"{user.role=} ")
+    if user.role == "student":
+        return HttpResponseRedirect('/students')
+    if user.role == "teacher":
+        return HttpResponseRedirect('/teachers')
+    # TODO : replace with our website home page in navbar items link to dashboard , username, logout
     return render(request, 'accounts/dashboard.html')
+
+

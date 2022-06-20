@@ -8,14 +8,7 @@ from .models import *
 import datetime
 
 
-# Create your views here.
-
-
 def index(request):
-    return render(request, "teachers/index.html")
-
-
-def dashboard(request):
     return render(request, "teachers/dashboard.html")
 
 
@@ -65,7 +58,7 @@ def create_test_objective(request):
             test_information.proctor_type = form.cleaned_data.get('proctor_type')
             test_information.save()
 
-            return HttpResponseRedirect('dashboard')
+            return HttpResponseRedirect('/teachers')
         else:
             return render(request, "teachers/create-test-obj.html", {'form': form.as_p()})
 
@@ -114,7 +107,7 @@ def create_test_subjective(request):
             test_information.proctor_type = form.cleaned_data.get('proctor_type')
             test_information.save()
 
-            return HttpResponseRedirect('dashboard')
+            return HttpResponseRedirect('/teachers')
         else:
             return render(request, "teachers/create-test-subj.html", {'form': form.as_p()})
 
