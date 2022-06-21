@@ -140,7 +140,7 @@ function funStartExam()
   confirmButtonAriaLabel: 'We are abide by rules!'
 }).then((result) => {
   if (result.isConfirmed) {
-    window.location.href = "/students/give-test";
+    window.location.href = "/students/test-login";
   }
 })
 }
@@ -228,6 +228,9 @@ function funStartExam()
         </ul>
     </div>
 </nav>
+
+{% block body %}
+{% endblock %}
 
 
 <script>

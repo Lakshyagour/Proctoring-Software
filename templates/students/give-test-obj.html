@@ -1,0 +1,25 @@
+{% extends 'students/exam-layout.html' %}
+{% block body %}
+<img src = "{% url 'video_stream' %}" width=180px height=150px>
+
+{% for question in objective_questions %}
+    <div>
+
+        <p>{{ question.question_id }} {{ question.question }} Marks : {{ question.marks}}</p>
+        <ul>
+            <li>
+                {{ question.option_a }}
+            </li>
+             <li>
+                {{ question.option_b }}
+            </li>
+             <li>
+                {{ question.option_c }}
+            </li>
+             <li>
+                {{ question.option_d }}
+            </li>
+        </ul>
+    </div>
+{% endfor %}
+{% endblock %}
