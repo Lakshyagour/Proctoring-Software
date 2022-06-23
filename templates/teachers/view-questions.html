@@ -15,14 +15,16 @@
     <input type="submit">
 </form>
 {% for question in questions %}
-<p>{{ question.question }}</p>
+<p>{{ question.question_id }} {{ question.question }}</p><br>
 <div>
+    {% if type == "Objective" %}
     <ul>
     <li>{{ question.option_a }}</li>
     <li>{{ question.option_b }}</li>
     <li>{{ question.option_c }}</li>
     <li>{{ question.option_d }}</li>
     </ul>
+    {% endif %}
 </div>
 {% endfor %}
 </body>
