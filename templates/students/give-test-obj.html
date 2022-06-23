@@ -1,25 +1,21 @@
 {% extends 'students/exam-layout.html' %}
 {% block body %}
-<img src = "{% url 'video_stream' %}" width=180px height=150px>
+<img src="{% url 'video_stream' %}" width=180px height=150px>
 
-{% for question in objective_questions %}
+<form action="give_test_objective" method="POST">
+    {% csrf_token %}
+    {% for question in objective_questions %}
     <div>
-
         <p>{{ question.question_id }} {{ question.question }} Marks : {{ question.marks}}</p>
-        <ul>
-            <li>
-                {{ question.option_a }}
-            </li>
-             <li>
-                {{ question.option_b }}
-            </li>
-             <li>
-                {{ question.option_c }}
-            </li>
-             <li>
-                {{ question.option_d }}
-            </li>
-        </ul>
+        <fieldset name = "{{ question.question_id }}">
+            <input type="radio" name="{{ question.question_id }}" value ="a">{{ question.option_a }}<br>
+            <input type="radio" name="{{ question.question_id }}" value ="b">{{ question.option_b }}<br>
+            <input type="radio" name="{{ question.question_id }}" value ="c">{{ question.option_c }}<br>
+            <input type="radio" name="{{ question.question_id }}" value ="d">{{ question.option_d }}<br>
+        </fieldset>
     </div>
-{% endfor %}
+    {% endfor %}
+    <input type="submit">
+</form>
+
 {% endblock %}

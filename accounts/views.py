@@ -1,5 +1,7 @@
 import logging
 from email import message
+
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -67,10 +69,14 @@ def signin(request):
     return render(request, "accounts/signin.html")
 
 
-def home(request):
+def signout(request):
+    logout(request)
+    return HttpResponseRedirect('/accounts/')
 
-    if not request.user.is_authenticated:
-        render(request, 'accounts/dashboard.html')
+
+def home(request):
+    if (not request.user.is_authenticated) or request.user.is_anonymous:
+        return render(request, 'accounts/dashboard.html')
 
     user = request.user
     logging.debug(f"{user.role=} ")
@@ -80,5 +86,3 @@ def home(request):
         return HttpResponseRedirect('/teachers')
     # TODO : replace with our website home page in navbar items link to dashboard , username, logout
     return render(request, 'accounts/dashboard.html')
-
-

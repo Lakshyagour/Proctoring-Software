@@ -30,7 +30,7 @@
             
         {% endfor %}
         <h3>Sign In</h3>
-        <form action="signin" method ='post'>
+        <form action="" method ='post'>
         {% csrf_token %}
             <label for="username">Username</label>
             <input type="text" id='username' name='username' placeholder="Enter your Username" Required>
@@ -49,7 +49,7 @@
                     <div id="snapshot"></div>
                 <input type="hidden" id="image_hidden" name="image_hidden" Required>
                 </div>
-            <button type="submit" class="btn btn-primary justify-content-center">Sign In</button>
+            <input type="submit" class="btn btn-primary justify-content-center" value="Sign In">
         </form>
         <script src="" async defer></script>
       

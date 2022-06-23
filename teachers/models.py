@@ -4,14 +4,14 @@ from django.db import models
 class TestObjective(models.Model):
     test_id = models.CharField(max_length=50)
     # teacher_id = models.CharField(max_length=50)
-    question_id = models.IntegerField()
+    question_id = models.CharField(max_length=50)
     question = models.CharField(max_length=500)
     option_a = models.CharField(max_length=500)
     option_b = models.CharField(max_length=500)
     option_c = models.CharField(max_length=500)
     option_d = models.CharField(max_length=500)
     ans = models.CharField(max_length=1)
-    marks = models.CharField(max_length=500)
+    marks = models.IntegerField()
 
 
 class TestSubjective(models.Model):
