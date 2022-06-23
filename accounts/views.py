@@ -23,7 +23,7 @@ def signup(request):
         pass1 = request.POST['pass1']
         pass2 = request.POST['pass2']
         user_image = request.POST["image_hidden"]
-        role = "student"
+        role = request.POST['role']
 
         if pass1 != pass2:
             message.error(request, "Password didn't match")
@@ -31,7 +31,7 @@ def signup(request):
         user = UserProfile(username=username, email=email, password=pass1, user_image=user_image, first_name=first_name,
                            last_name=last_name, role=role)
         user.save()
-        messages.success(request, "Your account has beem successfully created")
+        messages.success(request, "Your account has been successfully created")
         return redirect('signin')
     return render(request, 'accounts/signup.html')
 
@@ -80,9 +80,7 @@ def home(request):
 
     user = request.user
     logging.debug(f"{user.role=} ")
-    if user.role == "student":
-        return HttpResponseRedirect('/students')
-    if user.role == "teacher":
-        return HttpResponseRedirect('/teachers')
-    # TODO : replace with our website home page in navbar items link to dashboard , username, logout
-    return render(request, 'accounts/dashboard.html')
+    context = {"user": user}
+
+
+    return render(request, 'accounts/dashboard.html', context=context)

@@ -14,21 +14,11 @@
         <link rel="stylesheet"  href="{%  static  'css/style.css'  %}">
     </head>
     <body>
-        {% for message in messages %}            
-        <div class="container">
-            {% if user.is_authenticated %}
-            <div class="alert alert-danger alert-dismissible">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <strong>Info!</strong> {{message}}.
-            </div>
-            {% endif %}
-            <div class="alert alert-danger alert-dismissible">
-              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-              <strong>Info! User Authentication Failed</strong>
-          </div>
-        </div>
-            
-        {% endfor %}
+        {% if messages %}
+            {% for message in messages %}
+                <p> {{ message }}</p>
+            {% endfor %}
+        {% endif %}
         <h3>Sign In</h3>
         <form action="" method ='post'>
         {% csrf_token %}

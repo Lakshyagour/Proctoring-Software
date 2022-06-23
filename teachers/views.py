@@ -5,7 +5,6 @@ import logging
 from coolname import generate_slug
 import pandas as pd
 from .models import *
-import datetime
 
 
 def index(request):
@@ -40,7 +39,7 @@ def create_test_objective(request):
 
             test_teacher_join = TeacherTestJoin()
             test_teacher_join.test_id = test_id
-            test_teacher_join.teacher_id = "lakshya"  # TODO : change from static
+            test_teacher_join.teacher_id = request.user.username
             test_teacher_join.save()
 
             test_information = TestInformation()
@@ -89,7 +88,7 @@ def create_test_subjective(request):
 
             test_teacher_join = TeacherTestJoin()
             test_teacher_join.test_id = test_id
-            test_teacher_join.teacher_id = "lakshya"  # TODO : change from static
+            test_teacher_join.teacher_id = request.user.username
             test_teacher_join.save()
 
             test_information = TestInformation()
@@ -120,8 +119,14 @@ def view_question(request):
     if request.method == 'POST':
         logging.debug(f"fetching questions for test_id {request.POST}")
         test_id = request.POST['test_id']
-        questions = TestObjective.objects.filter(test_id=test_id)
-        context = {"tests": tests, "questions": questions}
+        test = TestInformation.objects.filter(test_id=test_id)
+        type = test[0].type
+        if type == "Subjective":
+            questions = TestSubjective.objects.filter(test_id=test_id)
+            context = {"tests": tests, "questions": questions, "type": "Subjective"}
+        if type == "Objective":
+            questions = TestObjective.objects.filter(test_id=test_id)
+            context = {"tests": tests, "questions": questions, "type": "Objective"}
         return render(request, "teachers/view-questions.html", context=context)
 
     context = {"tests": tests}

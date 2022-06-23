@@ -14,22 +14,29 @@
             <div class="Input">
                 <form method="POST" name="inputForm" enctype='multipart/form-data'>
                     {% csrf_token %}
-                    <label for="">Username</label>
+                    <label for="username">Username</label>
                     <input type="text" id='username' name='username' placeholder="Create a username(only letters and numbers)" Required>
                     <br>
-                    <label for="">First Name</label>
+                    <label for="fname">First Name</label>
                     <input type="text" id='fname' name='fname' placeholder="Enter Your First Name" Required>
                     <br>
-                    <label for="">Last Name</label>
+                    <label for="lname">Last Name</label>
                     <input type="text" id='lname' name='lname' placeholder="Enter Your Last Name" Required>
                     <br>
-                    <label for="">Email</label>
+                    <label for="email">Email</label>
                     <input type="email" id='email' name='email' placeholder="Enter Your Email" Required>
                     <br>
-                    <label for="">Create Password</label>
+                    <label for="role">Role</label>
+                    <select name  = "role" id="role">
+                        <option value = "student"> Student</option>
+                        <option value = "teacher" > Teacher</option>
+                    </select>
+
+                    <br>
+                    <label for="pass1">Create Password</label>
                     <input type="password" id='pass1' name='pass1' placeholder="Create Your Password" Required>
                     <br>
-                    <label for="">Confirm Password</label>
+                    <label for="pass2">Confirm Password</label>
                     <input type="password" id='pass2' name='pass2' placeholder="Confirm Your Password" Required>
                     <br>
 
