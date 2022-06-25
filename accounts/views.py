@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+
 from django.http import HttpResponseRedirect
 from accounts.models import UserProfile
 from django.contrib.auth.models import User
@@ -71,6 +72,11 @@ def signin(request):
 
     return render(request, "accounts/signin.html")
 
+def signout(request):
+    logout(request)
+    messages.success(request, "Logged out successfully")
+    return HttpResponseRedirect('/')
+    
 
 def signout(request):
     logout(request)
@@ -79,11 +85,9 @@ def signout(request):
 
 def home(request):
     if (not request.user.is_authenticated) or request.user.is_anonymous:
-        return render(request, 'accounts/dashboard.html')
+        return render(request, 'home.html')
 
     user = request.user
     logging.debug(f"{user.role=} ")
     context = {"user": user}
-
-
-    return render(request, 'accounts/dashboard.html', context=context)
+    return render(request, 'home.html', context=context)

@@ -4,23 +4,34 @@
         {% load static %}
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
+        <title>SignIn</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="">
-        <link rel="stylesheet"  href="{%  static  'css/style.css'  %}">
+        <!-- <link rel="stylesheet"  href="{%  static  'css/style1.css'  %}"> -->
     </head>
     <body>
-        {% if messages %}
-            {% for message in messages %}
-                <p> {{ message }}</p>
-            {% endfor %}
-        {% endif %}
-        <h3>Sign In</h3>
-        <form action="" method ='post'>
+        {% for message in messages %}            
+        <div class="container">
+            {% if user.is_authenticated %}
+            <div class="alert alert-danger alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Info!</strong> {{message}}.
+            </div>
+            {% endif %}
+            <div class="alert alert-danger alert-dismissible">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              <strong>Info! User Authentication Failed</strong>
+
+          </div>
+        </div>
+          
+        {% endfor %}
+        <!-- <h3>Sign In</h3>
+        <form action="signin" method ='post'>
         {% csrf_token %}
             <label for="username">Username</label>
             <input type="text" id='username' name='username' placeholder="Enter your Username" Required>
@@ -41,12 +52,50 @@
                 </div>
             <input type="submit" class="btn btn-primary justify-content-center" value="Sign In">
         </form>
-        <script src="" async defer></script>
+        <script src="" async defer></script> -->
       
     </body>
     
 </html>
+<html>
 
+<head>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+  <title>Sign in</title>
+</head>
+
+<body>
+  <div class="main">
+    <p class="sign" align="center">Sign in</p>
+    <form class ="form" action="" method ='post'>
+      {% csrf_token %}
+      <input class="un " type="text" id='username' name='username' align="center" placeholder="Username">
+      <input class="pass" type="password" id='pass1' name='pass1' align="center" placeholder="Password">
+
+
+      <div class="form-group">
+        <video id="stream" width="370" height="320">
+            <canvas id="capture" width="370" height="320">
+            </canvas>
+          </video>
+          <br>
+            <button id="btn-capture" type="button" >Capture Image</button>
+        <br><br>
+            <div id="snapshot"></div>
+        <input type="hidden" id="image_hidden" name="image_hidden" Required>
+        </div>
+      <input type="submit" class="submit" value = "Submit"/>
+      <p class="forgot" align="center"><a href="#">Forgot Password?</p>
+      <br>
+                
+    </div>
+     
+</body>
+
+</html>
 <script>
     // The buttons to start & stop stream and to capture the image
     //var btnStart = document.getElementById( "btn-start" );
