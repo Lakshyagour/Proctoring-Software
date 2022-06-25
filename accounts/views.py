@@ -42,6 +42,7 @@ def signin(request):
         username = request.POST['username']
         password = request.POST['pass1']
         user_image = request.POST["image_hidden"]
+        logging.info(f"{user_image=}")
 
         if not UserProfile.objects.filter(username=username).values("password"):
             messages.error(request, "User not found!")
@@ -52,7 +53,7 @@ def signin(request):
             return render(request, "accounts/signin.html")
 
         user = UserProfile.objects.filter(username=username)[0]
-        logging.info("Username: ", user.username)
+        logging.info(f"Username:  {user.username}")
         imgdata1 = user.user_image
         imgdata2 = user_image
         np_arr_1 = np.frombuffer(base64.b64decode(imgdata1), np.uint8)
@@ -68,19 +69,15 @@ def signin(request):
             return render(request, "accounts/signin.html")
 
         login(request, user)
-        return HttpResponseRedirect('/accounts')
+        return HttpResponseRedirect('/')
 
     return render(request, "accounts/signin.html")
+
 
 def signout(request):
     logout(request)
     messages.success(request, "Logged out successfully")
     return HttpResponseRedirect('/')
-    
-
-def signout(request):
-    logout(request)
-    return HttpResponseRedirect('/accounts/')
 
 
 def home(request):

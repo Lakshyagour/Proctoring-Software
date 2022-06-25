@@ -10,6 +10,7 @@
         <!-- <script type="module" src="{% static 'js/index.js' %}"></script> -->
     </head>
     <body>
+
         <div class="main">
               <p class="sign" align="center">Sign Up</p>
                 <form method="POST" name="inputForm" enctype='multipart/form-data'>
@@ -24,7 +25,7 @@
                     <input class="pass" type="password" id='pass2' name='pass2' align="center" placeholder="Password">
                     <div class="un ">
                       <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Choose User Type</label>
-                      <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="user_type" required>
+                      <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref" name="role" required>
                           <option value="student">Student</option>
                           <option value="teacher">Professor</option>
                       </select>
@@ -44,7 +45,7 @@
                     <button type="submit" class="submit" >Sign Up</button>
                 </form>
                 <p class="forgot" align="center">Already have an account?
-                  <a href="/signin">Click here
+                    <a href="/signin">Click here</a>
                   </p>
                   <br>
             </div>

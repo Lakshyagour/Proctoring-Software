@@ -1,7 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html>
     <head>
-        {% load static %}
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>SignIn</title>
@@ -14,45 +18,15 @@
         <!-- <link rel="stylesheet"  href="{%  static  'css/style1.css'  %}"> -->
     </head>
     <body>
+    {% if messages %}
         {% for message in messages %}            
-        <div class="container">
-            {% if user.is_authenticated %}
-            <div class="alert alert-danger alert-dismissible">
+      <div class="alert alert-danger alert-dismissible">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <strong>Info!</strong> {{message}}.
-            </div>
-            {% endif %}
-            <div class="alert alert-danger alert-dismissible">
-              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-              <strong>Info! User Authentication Failed</strong>
+      </div>
+       {% endfor %}
+    {% endif %}
 
-          </div>
-        </div>
-          
-        {% endfor %}
-        <!-- <h3>Sign In</h3>
-        <form action="signin" method ='post'>
-        {% csrf_token %}
-            <label for="username">Username</label>
-            <input type="text" id='username' name='username' placeholder="Enter your Username" Required>
-            <br>
-            <label for="pass1">Password</label>
-            <input type="password" id='pass1' name='pass1' placeholder="Enter Your Password" Required>
-            <br>
-            <div class="form-group">
-                <video id="stream" width="370" height="320">
-                    <canvas id="capture" width="370" height="320">
-                    </canvas>
-                  </video>
-                  <br>
-                    <button id="btn-capture" type="button" >Capture Image</button>
-                <br><br>
-                    <div id="snapshot"></div>
-                <input type="hidden" id="image_hidden" name="image_hidden" Required>
-                </div>
-            <input type="submit" class="btn btn-primary justify-content-center" value="Sign In">
-        </form>
-        <script src="" async defer></script> -->
       
     </body>
     
@@ -88,7 +62,7 @@
         <input type="hidden" id="image_hidden" name="image_hidden" Required>
         </div>
       <input type="submit" class="submit" value = "Submit"/>
-      <p class="forgot" align="center"><a href="#">Forgot Password?</p>
+        <p class="forgot" align="center"><a href="#">Forgot Password?</a></p>
       <br>
                 
     </div>

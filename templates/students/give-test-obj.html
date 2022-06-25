@@ -1,29 +1,18 @@
-<!--{% extends 'students/exam-layout.html' %}-->
-<!--{% block body %}-->
+{% extends 'students/exam-layout.html' %}
+{% block body %}
 {% load static %}
-<style>
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-    }
 
-    canvas {
-      position: absolute;
-    }
-  </style>
-<!--<img src="{% url 'video_stream' %}" width=180px height=150px>-->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js" crossorigin="anonymous"></script>
+{{ room_name|json_script:"room-name" }}
+<div class="container">
+    <video class="input_video"></video>
+    <canvas class="output_canvas" width="1280px" height="720px"></canvas>
+</div>
 
-<!--<textarea id="chat-log" cols="100" rows="20"></textarea><br>-->
-<!--    <input id="chat-message-input" type="text" size="100"><br>-->
-<!--    <input id="chat-message-submit" type="button" value="Send">-->
-    {{ room_name|json_script:"room-name" }}
-  <script defer src="{%  static  'js/face-api.min.js'  %}"></script>
-  <script defer src="{%  static  'js/script.js'  %}"></script>
-  <video id="video" width="720" height="560" autoplay muted></video>
+
 
 <form action="give_test_objective" method="POST">
     {% csrf_token %}
@@ -41,8 +30,49 @@
     <input type="submit">
 </form>
 
-<!--    <script>-->
+<script>
+    const videoElement = document.getElementsByClassName('input_video')[0];
+const canvasElement = document.getElementsByClassName('output_canvas')[0];
+const canvasCtx = canvasElement.getContext('2d');
+const drawingUtils = window
 
+function onResults(results) {
+  // Draw the overlays.
+  canvasCtx.save();
+  canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+  canvasCtx.drawImage(
+      results.image, 0, 0, canvasElement.width, canvasElement.height);
+  if (results.detections.length > 0) {
+    drawingUtils.drawRectangle(
+        canvasCtx, results.detections[0].boundingBox,
+        {color: 'blue', lineWidth: 4, fillColor: '#00000000'});
+    drawingUtils.drawLandmarks(canvasCtx, results.detections[0].landmarks, {
+      color: 'red',
+      radius: 5,
+    });
+    // console.log(results.detections.length);
+  }
+  canvasCtx.restore();
+}
 
-<!--    </script>-->
-<!--{% endblock %}-->
+const faceDetection = new FaceDetection({locateFile: (file) => {
+  return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`;
+}});
+faceDetection.setOptions({
+//   modelSelection: 0,
+  model: 'short',
+  minDetectionConfidence: 0.5,
+
+});
+faceDetection.onResults(onResults);
+
+const camera = new Camera(videoElement, {
+  onFrame: async () => {
+    await faceDetection.send({image: videoElement});
+  },
+  width: 1280,
+  height: 720
+});
+camera.start();
+  </script>
+{% endblock %}
