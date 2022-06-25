@@ -1,5 +1,7 @@
 import logging
 from email import message
+
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -22,7 +24,7 @@ def signup(request):
         pass1 = request.POST['pass1']
         pass2 = request.POST['pass2']
         user_image = request.POST["image_hidden"]
-        role = "student"
+        role = request.POST['role']
 
         if pass1 != pass2:
             message.error(request, "Password didn't match")
@@ -30,7 +32,7 @@ def signup(request):
         user = UserProfile(username=username, email=email, password=pass1, user_image=user_image, first_name=first_name,
                            last_name=last_name, role=role)
         user.save()
-        messages.success(request, "Your account has beem successfully created")
+        messages.success(request, "Your account has been successfully created")
         return redirect('signin')
     return render(request, 'accounts/signup.html')
 
@@ -43,9 +45,11 @@ def signin(request):
 
         if not UserProfile.objects.filter(username=username).values("password"):
             messages.error(request, "User not found!")
+            return render(request, "accounts/signin.html")
 
         if password != UserProfile.objects.filter(username=username).values("password")[0]["password"]:
             messages.error(request, "Password didn't match!")
+            return render(request, "accounts/signin.html")
 
         user = UserProfile.objects.filter(username=username)[0]
         logging.info("Username: ", user.username)
@@ -61,6 +65,7 @@ def signin(request):
         logging.debug(f"Image verifiled  = {img_result}")
         if not img_result["verified"]:
             messages.error(request, "Bad Image Credentials")
+            return render(request, "accounts/signin.html")
 
         login(request, user)
         return HttpResponseRedirect('/accounts')
@@ -72,6 +77,11 @@ def signout(request):
     messages.success(request, "Logged out successfully")
     return HttpResponseRedirect('/')
     
+
+def signout(request):
+    logout(request)
+    return HttpResponseRedirect('/accounts/')
+
 
 def home(request):
     if (not request.user.is_authenticated) or request.user.is_anonymous:

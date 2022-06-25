@@ -1,21 +1,16 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+
 from .forms import QAUploadForm
 import logging
 from coolname import generate_slug
 import pandas as pd
 from .models import *
-import datetime
-
-
-# Create your views here.
+from students.models import *
+from accounts.models import *
 
 
 def index(request):
-    return render(request, "teachers/index.html")
-
-
-def dashboard(request):
     return render(request, "teachers/dashboard.html")
 
 
@@ -47,7 +42,7 @@ def create_test_objective(request):
 
             test_teacher_join = TeacherTestJoin()
             test_teacher_join.test_id = test_id
-            test_teacher_join.teacher_id = "lakshya"  # TODO : change from static
+            test_teacher_join.teacher_id = request.user.username
             test_teacher_join.save()
 
             test_information = TestInformation()
@@ -65,7 +60,7 @@ def create_test_objective(request):
             test_information.proctor_type = form.cleaned_data.get('proctor_type')
             test_information.save()
 
-            return HttpResponseRedirect('dashboard')
+            return HttpResponseRedirect('/teachers')
         else:
             return render(request, "teachers/create-test-obj.html", {'form': form.as_p()})
 
@@ -96,7 +91,7 @@ def create_test_subjective(request):
 
             test_teacher_join = TeacherTestJoin()
             test_teacher_join.test_id = test_id
-            test_teacher_join.teacher_id = "lakshya"  # TODO : change from static
+            test_teacher_join.teacher_id = request.user.username
             test_teacher_join.save()
 
             test_information = TestInformation()
@@ -114,7 +109,7 @@ def create_test_subjective(request):
             test_information.proctor_type = form.cleaned_data.get('proctor_type')
             test_information.save()
 
-            return HttpResponseRedirect('dashboard')
+            return HttpResponseRedirect('/teachers')
         else:
             return render(request, "teachers/create-test-subj.html", {'form': form.as_p()})
 
@@ -123,13 +118,39 @@ def create_test_subjective(request):
 
 
 def view_question(request):
-    tests = TestInformation.objects.values_list('test_id', flat=True)
+    tests = TeacherTestJoin.objects.filter(teacher_id=request.user.username)
     if request.method == 'POST':
         logging.debug(f"fetching questions for test_id {request.POST}")
         test_id = request.POST['test_id']
-        questions = TestObjective.objects.filter(test_id=test_id)
-        context = {"tests": tests, "questions": questions}
+        test = TestInformation.objects.filter(test_id=test_id)
+        test_type = test[0].type
+        if test_type == "Subjective":
+            questions = TestSubjective.objects.filter(test_id=test_id)
+            context = {"tests": tests, "questions": questions, "type": "Subjective"}
+        if test_type == "Objective":
+            questions = TestObjective.objects.filter(test_id=test_id)
+            context = {"tests": tests, "questions": questions, "type": "Objective"}
         return render(request, "teachers/view-questions.html", context=context)
 
     context = {"tests": tests}
     return render(request, "teachers/view-questions.html", context=context)
+
+
+def view_tests_logs(request):
+    tests = TeacherTestJoin.objects.filter(teacher_id=request.user.username)
+    students = UserProfile.objects.filter(role="student")
+    if request.method == 'POST':
+        test_id = request.POST['test_id']
+        student_id = request.POST['student_id']
+        proctoring_logs = ProctoringLog.objects.filter(test_id="test_id", student_id=student_id).order_by("-timestamp")
+        context = {"proctoring_logs": proctoring_logs, "tests": tests, "students": students}
+        return render(request, "teachers/view-proctor-logs.html", context=context)
+
+    context = {"tests": tests, "students": students}
+    return render(request, "teachers/view-proctor-logs.html", context=context)
+
+
+def view_live_tests_logs(request):
+    return render(request, 'teachers/view-live-proctor-logs.html', {
+        'room_name': "12345"
+    })

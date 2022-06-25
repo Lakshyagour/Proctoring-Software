@@ -1,11 +1,7 @@
-{% load static %}
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html>
     <head>
+        {% load static %}
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>SignIn</title>
@@ -37,10 +33,10 @@
         <!-- <h3>Sign In</h3>
         <form action="signin" method ='post'>
         {% csrf_token %}
-            <label for="">Username</label>
+            <label for="username">Username</label>
             <input type="text" id='username' name='username' placeholder="Enter your Username" Required>
             <br>
-            <label for="">Password</label>
+            <label for="pass1">Password</label>
             <input type="password" id='pass1' name='pass1' placeholder="Enter Your Password" Required>
             <br>
             <div class="form-group">
@@ -54,7 +50,7 @@
                     <div id="snapshot"></div>
                 <input type="hidden" id="image_hidden" name="image_hidden" Required>
                 </div>
-            <button type="submit" class="btn btn-primary justify-content-center">Sign In</button>
+            <input type="submit" class="btn btn-primary justify-content-center" value="Sign In">
         </form>
         <script src="" async defer></script> -->
       
