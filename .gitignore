@@ -7,7 +7,7 @@
 static/models
 __pycache__/
 *.py[cod]
-
+*.pyc
 bin/
 build/
 develop-eggs/
