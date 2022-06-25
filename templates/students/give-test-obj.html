@@ -1,6 +1,29 @@
-{% extends 'students/exam-layout.html' %}
-{% block body %}
-<img src="{% url 'video_stream' %}" width=180px height=150px>
+<!--{% extends 'students/exam-layout.html' %}-->
+<!--{% block body %}-->
+{% load static %}
+<style>
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    canvas {
+      position: absolute;
+    }
+  </style>
+<!--<img src="{% url 'video_stream' %}" width=180px height=150px>-->
+
+<!--<textarea id="chat-log" cols="100" rows="20"></textarea><br>-->
+<!--    <input id="chat-message-input" type="text" size="100"><br>-->
+<!--    <input id="chat-message-submit" type="button" value="Send">-->
+    {{ room_name|json_script:"room-name" }}
+  <script defer src="{%  static  'js/face-api.min.js'  %}"></script>
+  <script defer src="{%  static  'js/script.js'  %}"></script>
+  <video id="video" width="720" height="560" autoplay muted></video>
 
 <form action="give_test_objective" method="POST">
     {% csrf_token %}
@@ -18,4 +41,8 @@
     <input type="submit">
 </form>
 
-{% endblock %}
+<!--    <script>-->
+
+
+<!--    </script>-->
+<!--{% endblock %}-->

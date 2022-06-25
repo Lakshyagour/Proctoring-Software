@@ -9,7 +9,7 @@
 {% csrf_token %}
     <select id = "test_id" name = "test_id">
         {% for test in tests %}
-        <option value="{{ test }}"> {{ test }}</option>
+        <option value="{{ test.test_id }}"> {{ test.test_id }}</option>
         {% endfor %}
     </select>
     <input type="submit">

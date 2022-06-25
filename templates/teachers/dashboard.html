@@ -1,137 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>MyProctor.ai</title> </head>
-  <body>
-        <nav id="sidebarMenu" class="sidebar d-md-block bg-dark text-white flex-md-column flex-row collapse" data-simplebar>
-          <div class="sidebar-inner px-4 pt-3">
-            <div class="user-card d-flex d-md-none align-items-center justify-content-between justify-content-md-center pb-4">
-              <div class="d-flex align-items-center">
+    <title>MyProctor.ai</title></head>
+<body>
+<nav id="sidebarMenu" class="sidebar d-md-block bg-dark text-white flex-md-column flex-row collapse" data-simplebar>
+    <div class="sidebar-inner px-4 pt-3">
+        <div class="user-card d-flex d-md-none align-items-center justify-content-between justify-content-md-center pb-4">
+            <div class="d-flex align-items-center">
                 <div class="user-avatar lg-avatar me-4">
-                  <img src = "https://www.w3schools.com/howto/img_avatar.png"
-                       style="vertical-align: middle; width: 50px; height: 50px; border-radius: 50%;"    alt="Profile Photo">
+                    <img src="https://www.w3schools.com/howto/img_avatar.png"
+                         style="vertical-align: middle; width: 50px; height: 50px; border-radius: 50%;"
+                         alt="Profile Photo">
                 </div>
                 <div class="d-block">
-                  <h2 class="h6">{{session.name}}</h2>
+                    <h2 class="h6">{{session.name}}</h2>
                 </div>
-              </div>
-              <div class="collapse-close d-md-none">
-                <a href="#sidebarMenu" class="fas fa-times" data-bs-toggle="collapse" data-bs-target="#sidebarMenu"
-                  aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation"></a>
-              </div>
             </div>
+            <div class="collapse-close d-md-none">
+                <a href="#sidebarMenu" class="fas fa-times" data-bs-toggle="collapse" data-bs-target="#sidebarMenu"
+                   aria-controls="sidebarMenu" aria-expanded="true" aria-label="Toggle navigation"></a>
+            </div>
+        </div>
 
         <ul class="nav flex-column pt-3 pt-md-0">
-          <li class="nav-item">
+            <li class="nav-item">
             <span
-              class="nav-link  collapsed  d-flex justify-content-between align-items-center"
-              data-bs-toggle="collapse" data-bs-target="#submenu-components">
+                    class="nav-link  collapsed  d-flex justify-content-between align-items-center"
+                    data-bs-toggle="collapse" data-bs-target="#submenu-components">
               <span>
                 <span class="sidebar-icon"><span class="fas fa-plus"></span></span>
                 <span class="sidebar-text">Create Exam</span>
               </span>
               <span class="link-arrow"><span class="fas fa-chevron-right"></span></span>
             </span>
-            <div class="multi-level collapse " role="list"
-              id="submenu-components" aria-expanded="false">
-              <ul class="flex-column nav">
-                <li class="nav-item">
-                  <a class="nav-link"
-                    href="create-test-obj">
-                    <span class="sidebar-text">Objective</span>
-                  </a>
-                </li>
-                <li class="nav-item ">
-                  <a class="nav-link" href="create-test-subj">
-                    <span class="sidebar-text">Subjective</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
+                <div class="multi-level collapse " role="list"
+                     id="submenu-components" aria-expanded="false">
+                    <ul class="flex-column nav">
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="create-test-obj">
+                                <span class="sidebar-text">Objective</span>
+                            </a>
+                        </li>
+                        <li class="nav-item ">
+                            <a class="nav-link" href="create-test-subj">
+                                <span class="sidebar-text">Subjective</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
 
-          <li class="nav-item">
-            <a href="view-questions" class="nav-link d-flex justify-content-between">
+            <li class="nav-item">
+                <a href="view-questions" class="nav-link d-flex justify-content-between">
               <span>
                 <span class="sidebar-icon"><span class="fas fa-eye"></span></span>
                 <span class="sidebar-text">View Questions </span>
               </span>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a href="/updatetidlist" class="nav-link">
-              <span class="sidebar-icon"><span class="fas fa-edit"></span></span>
-              <span class="sidebar-text">Update Questions</span>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a href="/deltidlist" class="nav-link">
-              <span class="sidebar-icon"><span class="fas fa-trash-alt"></span></span>
-              <span class="sidebar-text">Delete Questions</span>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a href="/{{session.email}}/disptests" class="nav-link">
-              <span class="sidebar-icon"><span class="fas fa-history"></span></span>
-              <span class="sidebar-text">Exam History</span>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a href="/livemonitoringtid" class="nav-link">
-              <span class="sidebar-icon"><span class="fas fa-video"></span></span>
-              <span class="sidebar-text">Live Monitoring</span>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a href="/viewstudentslogs" class="nav-link">
-              <span class="sidebar-icon"><span class="fas fa-binoculars"></span></span>
-              <span class="sidebar-text">Student Monitoring</span>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a href="/insertmarkstid" class="nav-link">
-              <span class="sidebar-icon"><span class="fas fa-spell-check"></span></span>
-              <span class="sidebar-text">Insert Marks</span>
-            </a>
-          </li>
-            <li class="nav-item">
-              <a href="/publish-results-testid" class="nav-link">
-                <span class="sidebar-icon"><span class="fas fa-clipboard-check"></span></span>
-                <span class="sidebar-text">Publish Results</span>
-              </a>
+                </a>
             </li>
-          <li class="nav-item ">
-            <a href="/report_professor" class="nav-link">
-              <span class="sidebar-icon"><span class="fas fa-bug"></span></span>
-              <span class="sidebar-text">Report Problems</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/changepassword_professor" class="nav-link d-flex align-items-center">
-              <span class="sidebar-icon"><span class="fas fa-key"></span></span>
-              <span class="sidebar-text">Change Password</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href ="#" onclick="return funLogout()"
-              class="btn btn-secondary d-flex align-items-center justify-content-center">
-              <span class="sidebar-icon"><span class="fas fa-sign-out-alt"></span></span> <span>Logout</span>
-            </a>
-          </li>
+            <li class="nav-item ">
+                <a href="/updatetidlist" class="nav-link">
+                    <span class="sidebar-icon"><span class="fas fa-edit"></span></span>
+                    <span class="sidebar-text">Update Questions</span>
+                </a>
+            </li>
+            <li class="nav-item ">
+                <a href="/deltidlist" class="nav-link">
+                    <span class="sidebar-icon"><span class="fas fa-trash-alt"></span></span>
+                    <span class="sidebar-text">Delete Questions</span>
+                </a>
+            </li>
+            <li class="nav-item ">
+                <a href="/{{session.email}}/disptests" class="nav-link">
+                    <span class="sidebar-icon"><span class="fas fa-history"></span></span>
+                    <span class="sidebar-text">Exam History</span>
+                </a>
+            </li>
+            <li class="nav-item ">
+                <a href="view-live-tests-logs" class="nav-link">
+                    <span class="sidebar-icon"><span class="fas fa-video"></span></span>
+                    <span class="sidebar-text">Live Monitoring</span>
+                </a>
+            </li>
+            <li class="nav-item ">
+                <a href="view-tests-logs" class="nav-link">
+                    <span class="sidebar-icon"><span class="fas fa-binoculars"></span></span>
+                    <span class="sidebar-text">View Test Logs</span>
+                </a>
+            </li>
+            <li class="nav-item ">
+                <a href="/insertmarkstid" class="nav-link">
+                    <span class="sidebar-icon"><span class="fas fa-spell-check"></span></span>
+                    <span class="sidebar-text">Insert Marks</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/publish-results-testid" class="nav-link">
+                    <span class="sidebar-icon"><span class="fas fa-clipboard-check"></span></span>
+                    <span class="sidebar-text">Publish Results</span>
+                </a>
+            </li>
+            <li class="nav-item ">
+                <a href="/report_professor" class="nav-link">
+                    <span class="sidebar-icon"><span class="fas fa-bug"></span></span>
+                    <span class="sidebar-text">Report Problems</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/changepassword_professor" class="nav-link d-flex align-items-center">
+                    <span class="sidebar-icon"><span class="fas fa-key"></span></span>
+                    <span class="sidebar-text">Change Password</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" onclick="return funLogout()"
+                   class="btn btn-secondary d-flex align-items-center justify-content-center">
+                    <span class="sidebar-icon"><span class="fas fa-sign-out-alt"></span></span> <span>Logout</span>
+                </a>
+            </li>
         </ul>
-      </div>
-    </nav>
+    </div>
+</nav>
 
-    <main class="content">
-      <nav class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0">
-<div class="container-fluid px-0">
-<div class="d-flex justify-content-between w-100" id="navbarSupportedContent">
+<main class="content">
+    <nav class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0">
+        <div class="container-fluid px-0">
+            <div class="d-flex justify-content-between w-100" id="navbarSupportedContent">
 
             </div>
-         </div>
-</nav>
-    </main>
- <script>
+        </div>
+    </nav>
+</main>
+<script>
 function funLogout () {
 
 swal.fire({
@@ -174,11 +175,12 @@ swal.fire({
 })
 }
 
+
 </script>
 
- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
 
- <script async defer src="https://buttons.github.io/buttons.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
 
 
 </body>

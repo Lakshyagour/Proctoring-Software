@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-l+3s7_xq*@sqjav8#5(fye!d8@hw!85i!=t%*$a3!erv2r6(k5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+
+CSRF_TRUSTED_ORIGINS = ['https://3956-2405-201-680c-1133-212a-f46-a2fc-282f.in.ngrok.io']
 
 # Application definition
 
@@ -39,7 +41,8 @@ INSTALLED_APPS = [
     'teachers',
     'students',
     'accounts',
-    'crispy_forms'
+    'crispy_forms',
+    'channels',
 ]
 
 LOGGING = {
@@ -140,3 +143,14 @@ LOGIN_URL = "/accounts/signin"
 LOGOUT_URL = "/accounts/logout"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ASGI_APPLICATION = 'EXAMINATION_PROCTORING_SYSTEM.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}

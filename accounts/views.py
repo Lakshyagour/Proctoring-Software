@@ -44,9 +44,11 @@ def signin(request):
 
         if not UserProfile.objects.filter(username=username).values("password"):
             messages.error(request, "User not found!")
+            return render(request, "accounts/signin.html")
 
         if password != UserProfile.objects.filter(username=username).values("password")[0]["password"]:
             messages.error(request, "Password didn't match!")
+            return render(request, "accounts/signin.html")
 
         user = UserProfile.objects.filter(username=username)[0]
         logging.info("Username: ", user.username)
@@ -62,6 +64,7 @@ def signin(request):
         logging.debug(f"Image verifiled  = {img_result}")
         if not img_result["verified"]:
             messages.error(request, "Bad Image Credentials")
+            return render(request, "accounts/signin.html")
 
         login(request, user)
         return HttpResponseRedirect('/accounts')

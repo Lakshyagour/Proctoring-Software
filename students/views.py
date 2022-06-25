@@ -5,6 +5,8 @@ from datetime import datetime
 import cv2
 import mediapipe
 import numpy as np
+from asgiref.sync import async_to_sync, sync_to_async
+from channels.layers import get_channel_layer
 from deepface import DeepFace
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -18,11 +20,23 @@ from teachers.models import TestObjective, TestInformation
 from .camera import VideoCamera
 from .models import ProctoringLog
 from .models import TestResult
+from teachers.consumers import ChatConsumer
 
 mp_face_detection = mediapipe.solutions.face_detection
 mp_drawing = mediapipe.solutions.drawing_utils
 face_detection = mp_face_detection.FaceDetection(
     model_selection=0, min_detection_confidence=0.5)
+
+
+def event_triger():
+    channel_layer = get_channel_layer()
+    sync_to_async(channel_layer.group_send)(
+        '12345',
+        {
+            'type': 'chat_message',
+            'message': "event_trigered_from_views"
+        }
+    )
 
 
 @login_required
@@ -67,9 +81,9 @@ def test_login(request):
 
         student_id = request.user.username
         result = TestResult.objects.filter(test_id=test_id, student_id=student_id)
-        if result:
-            messages.error(request, "Test already submitted")
-            return render(request, 'students/test-login.html')
+        # if result:
+        #     messages.error(request, "Test already submitted")
+        #     return render(request, 'students/test-login.html')
 
         return redirect("give_test_objective")
     return render(request, 'students/test-login.html')
@@ -98,7 +112,7 @@ def give_test_objective(request):
         result.save()
         return redirect("test_result")
     objective_questions = TestObjective.objects.filter(test_id=request.session['test_id'])
-    context = {"objective_questions": objective_questions}
+    context = {"objective_questions": objective_questions, "test_id": request.session['test_id'], 'room_name': "12345"}
     return render(request, 'students/give-test-obj.html', context=context)
 
 
@@ -106,9 +120,9 @@ def give_test_objective(request):
 def test_result(request):
     test_id = request.session['test_id']
     student_id = request.user.username
-    result = TestResult.objects.filter(test_id = test_id,student_id = student_id)
-    context = {"marks":result[0].marks}
-    return render(request, "students/test-result.html",context= context)
+    result = TestResult.objects.filter(test_id=test_id, student_id=student_id)
+    context = {"marks": result[0].marks}
+    return render(request, "students/test-result.html", context=context)
 
 
 @login_required
@@ -121,12 +135,17 @@ def exam_history(request):
     return render(request, 'students/dashboard.html')
 
 
-def gen(camera, username):
+def video_stream(request):
+    return StreamingHttpResponse(gen(VideoCamera(), request.user.username, request.session['test_id']),
+                                 content_type='multipart/x-mixed-replace; boundary=frame')
+
+
+def gen(camera, username, test_id):
     count = 0
     while True:
         frame = camera.get_frame()
         # print(org_frame.shape)
-        flag, frame, count = get_results(frame, count, username)
+        flag, frame, count = get_results(frame, count, username, test_id)
         if flag:
             frame = cv2.copyMakeBorder(frame, 20, 20, 20, 20, cv2.BORDER_CONSTANT, value=[0, 0, 255])
         frame_flip = cv2.flip(frame, 1)
@@ -136,12 +155,7 @@ def gen(camera, username):
                b'Content-Type: image/jpeg\r\n\r\n' + frame.tobytes() + b'\r\n\r\n')
 
 
-def video_stream(request):
-    return StreamingHttpResponse(gen(VideoCamera(), request.user.username),
-                                 content_type='multipart/x-mixed-replace; boundary=frame')
-
-
-def get_result(username, image, count):
+def get_result(username, image, count, test_id):
     violate = False
     image.flags.writeable = False
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -154,12 +168,13 @@ def get_result(username, image, count):
             logging.info(f"Image Log saved {curr_time}")
             cv2.imwrite(f"media/live_proctor_log_images/{username}.png", image)
             proctoring_log = ProctoringLog()
-            proctoring_log.test_id = "test_id"
+            proctoring_log.test_id = test_id
             proctoring_log.flag = "person on in window or any other flag"
             proctoring_log.student_id = username
             with open(f'media/live_proctor_log_images/{username}.png', 'rb') as destination_file:
                 proctoring_log.image.save(f"{curr_time}.jpg", File(destination_file))
             proctoring_log.save()
+            event_triger()
 
             violate = True
             count = 0
@@ -169,6 +184,6 @@ def get_result(username, image, count):
     return image, violate, count
 
 
-def get_results(frame, count, username):
-    frame, violate, count = get_result(username=username, image=frame, count=count)
+def get_results(frame, count, username, test_id):
+    frame, violate, count = get_result(username=username, image=frame, count=count, test_id=test_id)
     return violate, frame, count

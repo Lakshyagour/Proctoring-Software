@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+
 from .forms import QAUploadForm
 import logging
 from coolname import generate_slug
 import pandas as pd
 from .models import *
+from students.models import *
+from accounts.models import *
 
 
 def index(request):
@@ -115,19 +118,39 @@ def create_test_subjective(request):
 
 
 def view_question(request):
-    tests = TestInformation.objects.values_list('test_id', flat=True)
+    tests = TeacherTestJoin.objects.filter(teacher_id=request.user.username)
     if request.method == 'POST':
         logging.debug(f"fetching questions for test_id {request.POST}")
         test_id = request.POST['test_id']
         test = TestInformation.objects.filter(test_id=test_id)
-        type = test[0].type
-        if type == "Subjective":
+        test_type = test[0].type
+        if test_type == "Subjective":
             questions = TestSubjective.objects.filter(test_id=test_id)
             context = {"tests": tests, "questions": questions, "type": "Subjective"}
-        if type == "Objective":
+        if test_type == "Objective":
             questions = TestObjective.objects.filter(test_id=test_id)
             context = {"tests": tests, "questions": questions, "type": "Objective"}
         return render(request, "teachers/view-questions.html", context=context)
 
     context = {"tests": tests}
     return render(request, "teachers/view-questions.html", context=context)
+
+
+def view_tests_logs(request):
+    tests = TeacherTestJoin.objects.filter(teacher_id=request.user.username)
+    students = UserProfile.objects.filter(role="student")
+    if request.method == 'POST':
+        test_id = request.POST['test_id']
+        student_id = request.POST['student_id']
+        proctoring_logs = ProctoringLog.objects.filter(test_id="test_id", student_id=student_id).order_by("-timestamp")
+        context = {"proctoring_logs": proctoring_logs, "tests": tests, "students": students}
+        return render(request, "teachers/view-proctor-logs.html", context=context)
+
+    context = {"tests": tests, "students": students}
+    return render(request, "teachers/view-proctor-logs.html", context=context)
+
+
+def view_live_tests_logs(request):
+    return render(request, 'teachers/view-live-proctor-logs.html', {
+        'room_name': "12345"
+    })
