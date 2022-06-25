@@ -1,6 +1,10 @@
 /.idea
 /media/live_proctor_log_images
 /media
+/accounts/migrations
+/teachers/migrations
+/students/migrations
+static/models
 __pycache__/
 *.py[cod]
 
