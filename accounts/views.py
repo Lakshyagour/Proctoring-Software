@@ -3,6 +3,7 @@ from email import message
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+
 from django.http import HttpResponseRedirect
 from accounts.models import UserProfile
 from django.contrib.auth.models import User
@@ -66,6 +67,17 @@ def signin(request):
 
     return render(request, "accounts/signin.html")
 
+def signout(request):
+    logout(request)
+    messages.success(request, "Logged out successfully")
+    return HttpResponseRedirect('/')
+    
 
 def home(request):
-    return render(request, 'accounts/dashboard.html')
+    if (not request.user.is_authenticated) or request.user.is_anonymous:
+        return render(request, 'home.html')
+
+    user = request.user
+    logging.debug(f"{user.role=} ")
+    context = {"user": user}
+    return render(request, 'home.html', context=context)
