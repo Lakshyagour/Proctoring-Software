@@ -14,7 +14,7 @@ from django.core.files import File
 from django.http.response import StreamingHttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
-
+from .segmentation import get_segmented_image
 from accounts.models import UserProfile
 from teachers.models import TestObjective, TestInformation
 from .camera import VideoCamera
@@ -68,6 +68,7 @@ def test_login(request):
         imgdata2 = user_image
         np_arr_1 = np.frombuffer(base64.b64decode(imgdata1), np.uint8)
         np_arr_2 = np.frombuffer(base64.b64decode(imgdata2), np.uint8)
+        np_arr_2=get_segmented_image(np_arr_2)
         image1 = cv2.imdecode(np_arr_1, cv2.COLOR_BGR2GRAY)
         image2 = cv2.imdecode(np_arr_2, cv2.COLOR_BGR2GRAY)
         models = ["VGG-Face", "Facenet", "Facenet512", "OpenFace", "DeepFace", "DeepID", "ArcFace", "Dlib", "SFace"]
