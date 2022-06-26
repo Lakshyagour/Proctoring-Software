@@ -4,18 +4,31 @@
     <title>Chat Room</title>
 </head>
 <body>
+<form action="view-live-tests-logs" method="POST">
+{% csrf_token %}
+    <select id = "test_id" name = "test_id">
+        {% for test in tests %}
+        <option value="{{ test.test_id }}"> {{ test.test_id }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit">
+</form>
+
     <textarea id="chat-log" cols="100" rows="20"></textarea><br>
     <input id="chat-message-input" type="text" size="100"><br>
     <input id="chat-message-submit" type="button" value="Send">
-    {{ room_name|json_script:"room-name" }}
+    {{ room_name|json_script:"room_name" }}
+
     <script>
 
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        const room_name = JSON.parse(document.getElementById('room_name').textContent);
+        var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
         const chatSocket = new WebSocket(
-            'ws://'
+           ws_scheme
+            +'://'
             + window.location.host
             + '/ws/chat/'
-            + roomName
+            + room_name
             + '/'
         );
 

@@ -20,7 +20,7 @@ def create_test_objective(request):
         if form.is_valid():
             logging.info(form.cleaned_data)
 
-            test_id = generate_slug(2)
+            test_id = generate_slug(1)
             filestream = form.cleaned_data.get('doc')
             filestream.seek(0)
             df = pd.read_csv(filestream)
@@ -74,7 +74,7 @@ def create_test_subjective(request):
         if form.is_valid():
             logging.info(form.cleaned_data)
 
-            test_id = generate_slug(2)
+            test_id = generate_slug(1)
             filestream = form.cleaned_data.get('doc')
             filestream.seek(0)
             df = pd.read_csv(filestream)
@@ -142,7 +142,7 @@ def view_tests_logs(request):
     if request.method == 'POST':
         test_id = request.POST['test_id']
         student_id = request.POST['student_id']
-        proctoring_logs = ProctoringLog.objects.filter(test_id="test_id", student_id=student_id).order_by("-timestamp")
+        proctoring_logs = ProctoringLog.objects.filter(test_id=test_id, student_id=student_id).order_by("-timestamp")
         context = {"proctoring_logs": proctoring_logs, "tests": tests, "students": students}
         return render(request, "teachers/view-proctor-logs.html", context=context)
 
@@ -151,6 +151,11 @@ def view_tests_logs(request):
 
 
 def view_live_tests_logs(request):
-    return render(request, 'teachers/view-live-proctor-logs.html', {
-        'room_name': "12345"
-    })
+    tests = TeacherTestJoin.objects.filter(teacher_id=request.user.username)
+    if request.method == 'POST':
+        test_id = request.POST['test_id']
+        context = {"tests": tests,"room_name": test_id}
+        return render(request, "teachers/view-live-proctor-logs.html", context=context)
+
+    context = {"tests": tests}
+    return render(request, 'teachers/view-live-proctor-logs.html',context=context)

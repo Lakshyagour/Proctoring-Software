@@ -1,7 +1,7 @@
 import base64
 import logging
 from datetime import datetime
-
+from django.http import HttpResponse
 import cv2
 import mediapipe
 import numpy as np
@@ -63,7 +63,7 @@ def test_login(request):
             return render(request, 'students/test-login.html')
 
         user = UserProfile.objects.filter(username=username)[0]
-        logging.info("Username: ", user.username)
+        logging.info(f"Username:  {user.username}")
         imgdata1 = user.user_image
         imgdata2 = user_image
         np_arr_1 = np.frombuffer(base64.b64decode(imgdata1), np.uint8)
@@ -112,7 +112,8 @@ def give_test_objective(request):
         result.save()
         return redirect("test_result")
     objective_questions = TestObjective.objects.filter(test_id=request.session['test_id'])
-    context = {"objective_questions": objective_questions, "test_id": request.session['test_id'], 'room_name': "12345"}
+    context = {"objective_questions": objective_questions, "test_id": request.session['test_id'],
+               "username": request.user.username}
     return render(request, 'students/give-test-obj.html', context=context)
 
 
@@ -187,3 +188,33 @@ def get_result(username, image, count, test_id):
 def get_results(frame, count, username, test_id):
     frame, violate, count = get_result(username=username, image=frame, count=count, test_id=test_id)
     return violate, frame, count
+
+
+import base64
+
+
+def save_proctor_log(request):
+    if request.method == 'POST':
+        try:
+            now = datetime.now()
+            curr_time = now.strftime("%H_%M_%S")
+            username = request.POST['username']
+            test_id = request.POST['test_id']
+            image = request.POST['image']
+
+            with open(f"media/live_proctor_log_images/{username}.png", "wb") as log_live:
+                log_live.write(base64.b64decode(image))
+
+            proctoring_log = ProctoringLog()
+            proctoring_log.test_id = test_id
+            proctoring_log.flag = "person on in window or any other flag"
+            proctoring_log.student_id = username
+            with open(f'media/live_proctor_log_images/{username}.png', 'rb') as destination_file:
+                proctoring_log.image.save(f"{curr_time}.jpg", File(destination_file))
+            proctoring_log.save()
+            logging.debug(f"Proctor Log Saved Successfully at {curr_time}.jpg")
+            return HttpResponse("Saved Successfully")
+        except Exception as error:
+            return HttpResponse(error)
+
+    return HttpResponse("students/save_proctor_log Not a Post Request ")

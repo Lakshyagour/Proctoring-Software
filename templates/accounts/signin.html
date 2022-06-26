@@ -1,11 +1,7 @@
-{% load static %}
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html>
     <head>
+        {% load static %}
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>SignIn</title>
@@ -64,31 +60,22 @@
       <input type="submit" class="submit" value = "Submit"/>
         <p class="forgot" align="center"><a href="#">Forgot Password?</a></p>
       <br>
-                
+    </form>
     </div>
-     
 </body>
 
 </html>
 <script>
-    // The buttons to start & stop stream and to capture the image
-    //var btnStart = document.getElementById( "btn-start" );
-    //var btnStop = document.getElementById( "btn-stop" );
     var btnCapture = document.getElementById( "btn-capture" );
 
-    // The stream & capture
     var stream = document.getElementById( "stream" );
     var capture = document.getElementById( "capture" );
     var snapshot = document.getElementById( "snapshot" );
     
-    // The video stream
     var cameraStream = null;
     
     btnCapture.addEventListener( "click", captureSnapshot );
 
-    // Attach listeners
-    
-    // Start Streaming
     function startStreaming() {
     
       var mediaSupport = 'mediaDevices' in navigator;
@@ -114,8 +101,7 @@
         return;
       }
     }
-    
-    // Stop Streaming
+
     function stopStreaming() {
     
       if( null != cameraStream ) {
@@ -130,7 +116,6 @@
     }
     
     function captureSnapshot() {
-    
       if( null != cameraStream ) {
     
         var ctx = capture.getContext( '2d' );
