@@ -11,7 +11,7 @@ from accounts.models import *
 
 
 def index(request):
-    return render(request, "teachers/dashboard.html")
+    return render(request, "teachers/home.html")
 
 
 def create_test_objective(request):

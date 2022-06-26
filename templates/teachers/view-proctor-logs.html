@@ -1,3 +1,5 @@
+{% extends 'teachers/base.html' %}
+{% block view_logs %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +15,7 @@
         {% endfor %}
     </select>
     <select id = "student_id" name = "student_id">
-        {% for student in students %}
+        {% for student in students %}   
         <option value="{{ student.username }}"> {{ student.username }}</option>
         {% endfor %}
     </select>
@@ -29,3 +31,4 @@
 {% endfor %}
 </body>
 </html>
+{ % endblock %}
