@@ -34,8 +34,8 @@
     {% endfor %}
     <input type="submit">
 </form>
-
 <script>
+
 
 const test_id = JSON.parse(document.getElementById('test_id').textContent);
 const username = JSON.parse(document.getElementById('username').textContent);
@@ -60,14 +60,19 @@ function onResults(results) {
   let flag = false
   if (results.detections.length != 1)
   {
+
+
     count+=1
     if (count == 10)
     {
+      var imgData = results.image.toDataURL();
       flag = true
       count=0
-      console.log(flag,count)
+
        chatSocket.send(JSON.stringify({
-                'message': username+ ' Violation'
+                'message': username+ ' Violation',
+                'image':imgData,
+                'id':username
        }));
 
        captureSnapshot()

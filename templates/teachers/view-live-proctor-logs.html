@@ -15,10 +15,11 @@
 </form>
 
     <textarea id="chat-log" cols="100" rows="20"></textarea><br>
-    <input id="chat-message-input" type="text" size="100"><br>
-    <input id="chat-message-submit" type="button" value="Send">
-    {{ room_name|json_script:"room_name" }}
 
+    {{ room_name|json_script:"room_name" }}
+<div id="box">
+
+</div>
     <script>
 
         const room_name = JSON.parse(document.getElementById('room_name').textContent);
@@ -31,30 +32,27 @@
             + room_name
             + '/'
         );
+        const box = document.getElementById('box');
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             document.querySelector('#chat-log').value += (data.message + '\n');
-        };
-
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
-        };
-
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#chat-message-submit').click();
+            console.log(data.image)
+            var myImageElement = document.getElementById(data.id);
+            if(myImageElement){
+            myImageElement.src = data.image;
+            }
+            else {
+            const image = document.createElement('img');
+            image.setAttribute('src',data.image);
+            image.setAttribute('id',data.id);
+            image.setAttribute('height', 250);
+            image.setAttribute('width', 250);
+            box.appendChild(image);
             }
         };
-
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInputDom.value = '';
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
         };
     </script>
 </body>
