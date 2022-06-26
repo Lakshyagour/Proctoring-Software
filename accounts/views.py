@@ -13,7 +13,7 @@ import numpy as np
 import base64, cv2
 from django.conf import settings
 from deepface import DeepFace
-
+from .segmentation import get_segmented_image
 
 def signup(request):
     if request.method == 'POST':
@@ -24,6 +24,10 @@ def signup(request):
         pass1 = request.POST['pass1']
         pass2 = request.POST['pass2']
         user_image = request.POST["image_hidden"]
+        user_image = np.frombuffer(base64.b64decode( user_image), np.uint8)
+        user_image = get_segmented_image(user_image)
+        retval, buffer = cv2.imencode('.jpg', user_image)
+        user_image = base64.b64encode(buffer)
         role = request.POST['role']
 
         if pass1 != pass2:
@@ -58,6 +62,7 @@ def signin(request):
         imgdata2 = user_image
         np_arr_1 = np.frombuffer(base64.b64decode(imgdata1), np.uint8)
         np_arr_2 = np.frombuffer(base64.b64decode(imgdata2), np.uint8)
+        np_arr_2 = get_segmented_image(np_arr_2)
         image1 = cv2.imdecode(np_arr_1, cv2.COLOR_BGR2GRAY)
         image2 = cv2.imdecode(np_arr_2, cv2.COLOR_BGR2GRAY)
         models = ["VGG-Face", "Facenet", "Facenet512", "OpenFace", "DeepFace", "DeepID", "ArcFace", "Dlib", "SFace"]
