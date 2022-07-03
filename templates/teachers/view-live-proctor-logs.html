@@ -26,6 +26,7 @@
 
         const room_name = JSON.parse(document.getElementById('room_name').textContent);
         var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+        console.log("Chat Socket Opened");
         const chatSocket = new WebSocket(
            ws_scheme
             +'://'
@@ -56,6 +57,7 @@
         chatSocket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
         };
+
     </script>
 </body>
 </html>

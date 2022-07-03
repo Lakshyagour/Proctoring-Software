@@ -40,7 +40,7 @@
 const test_id = JSON.parse(document.getElementById('test_id').textContent);
 const username = JSON.parse(document.getElementById('username').textContent);
 var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-console.log(window.location.host)
+
 const chatSocket = new WebSocket(
     ws_scheme
     +'://'
@@ -56,21 +56,21 @@ console.log(window.CSRF_TOKEN)
 
 var count=0
 function onResults(results) {
+for (let i = 0; i < results.detections.length; i++) {
+get_face_motion_flag(results,results.detections[i].landmarks);
+}
 
-  let flag = false
-  if (results.detections.length != 1)
-  {
+  get_person_detection_flag(results,results.detections.length);
+}
 
+function send_logs(results, violation_message ){
 
-    count+=1
-    if (count == 10)
-    {
-      var imgData = results.image.toDataURL();
+var imgData = results.image.toDataURL();
       flag = true
       count=0
 
        chatSocket.send(JSON.stringify({
-                'message': username+ ' Violation',
+                'message': username+ ' '+ violation_message,
                 'image':imgData,
                 'id':username
        }));
@@ -85,9 +85,62 @@ function onResults(results) {
        }).done(function(response){
          console.log(response);
        });
+ }
+
+function get_face_motion_flag(results,landmarks)
+{ let head_flag=false
+
+  //for right side
+  if (landmarks[0]["x"] <= landmarks[4]["x"])
+  {
+    count+=1
+    if (count == 20)
+    { head_flag = true
+      count=0
+      console.log("looking right side of window")
+      send_logs(results,"looking right side of window");
+    }
+  }
+  //for left side
+  if (landmarks[1]["x"] >= landmarks[5]["x"])
+  {
+    count+=1
+    if (count == 20)
+    { head_flag = true
+      count=0
+      console.log("looking left side of window")
+      send_logs(results,"looking left side of window");
+     }
+  }
+}
+
+function get_person_detection_flag(results,detection_length)
+{
+  if (detection_length == 0)
+  {
+    count+=1
+    if (count == 20)
+    {
+      flag = true
+      count=0
+      console.log("no person detected");
+      send_logs(results,"no person detected");
+    }
+  }
+
+  if (detection_length > 1)
+  {
+    count+=1
+    if (count == 20)
+    {
+      flag = true
+      count=0
+      console.log("more than 1 person detected");
+      send_logs(results,"more than 1 person detected");
     }
   }
 }
+
 
 const faceDetection = new FaceDetection({locateFile: (file) => {
   return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`;
