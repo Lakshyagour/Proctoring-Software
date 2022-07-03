@@ -1,11 +1,11 @@
-import base64
 import logging
 from datetime import datetime
 from django.http import HttpResponse
 import cv2
 import mediapipe
 import numpy as np
-from asgiref.sync import async_to_sync, sync_to_async
+import base64
+from asgiref.sync import sync_to_async
 from channels.layers import get_channel_layer
 from deepface import DeepFace
 from django.contrib import messages
@@ -28,21 +28,21 @@ face_detection = mp_face_detection.FaceDetection(
     model_selection=0, min_detection_confidence=0.5)
 
 
-def event_triger():
-    channel_layer = get_channel_layer()
-    sync_to_async(channel_layer.group_send)(
-        '12345',
-        {
-            'type': 'chat_message',
-            'message': "event_trigered_from_views"
-        }
-    )
+# def event_triger():
+#     channel_layer = get_channel_layer()
+#     sync_to_async(channel_layer.group_send)(
+#         '12345',
+#         {
+#             'type': 'chat_message',
+#             'message': "event_trigered_from_views"
+#         }
+#     )
 
 
 @login_required
 def dashboard(request):
     request.session['test_id'] = None
-    return render(request, 'students/dashboard.html')
+    return render(request, 'students/home.html')
 
 
 @login_required
@@ -53,6 +53,10 @@ def test_login(request):
         test_id = request.POST['test_id']
         password = request.POST['pass']
         user_image = request.POST["image_hidden"]
+        if not user_image:
+            messages.error(request, "User Image Not Found")
+            logging.info(f"{user_image=}")
+            return render(request, 'students/test-login.html')
 
         if not TestInformation.objects.filter(test_id=test_id).values("password"):
             messages.error(request, "Test_Id is not valid")
@@ -68,7 +72,8 @@ def test_login(request):
         imgdata2 = user_image
         np_arr_1 = np.frombuffer(base64.b64decode(imgdata1), np.uint8)
         np_arr_2 = np.frombuffer(base64.b64decode(imgdata2), np.uint8)
-        np_arr_2=get_segmented_image(np_arr_2)
+
+        # np_arr_2=get_segmented_image(np_arr_2)
         image1 = cv2.imdecode(np_arr_1, cv2.COLOR_BGR2GRAY)
         image2 = cv2.imdecode(np_arr_2, cv2.COLOR_BGR2GRAY)
         models = ["VGG-Face", "Facenet", "Facenet512", "OpenFace", "DeepFace", "DeepID", "ArcFace", "Dlib", "SFace"]
@@ -86,7 +91,7 @@ def test_login(request):
         #     messages.error(request, "Test already submitted")
         #     return render(request, 'students/test-login.html')
 
-        return redirect("give_test_objective")
+        return redirect("give-test-objective")
     return render(request, 'students/test-login.html')
 
 
@@ -136,63 +141,60 @@ def give_test_subjective(request):
 def exam_history(request):
     return render(request, 'students/dashboard.html')
 
-
-def video_stream(request):
-    return StreamingHttpResponse(gen(VideoCamera(), request.user.username, request.session['test_id']),
-                                 content_type='multipart/x-mixed-replace; boundary=frame')
-
-
-def gen(camera, username, test_id):
-    count = 0
-    while True:
-        frame = camera.get_frame()
-        # print(org_frame.shape)
-        flag, frame, count = get_results(frame, count, username, test_id)
-        if flag:
-            frame = cv2.copyMakeBorder(frame, 20, 20, 20, 20, cv2.BORDER_CONSTANT, value=[0, 0, 255])
-        frame_flip = cv2.flip(frame, 1)
-        ret, frame = cv2.imencode('.jpg', frame_flip)
-
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame.tobytes() + b'\r\n\r\n')
-
-
-def get_result(username, image, count, test_id):
-    violate = False
-    image.flags.writeable = False
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    results = face_detection.process(image)
-
-    if type(results.detections) == type(None) or len(results.detections) != 1:  # or yl:
-        now = datetime.now()
-        curr_time = now.strftime("%H_%M_%S")
-        if count > 10 and int(datetime.now().strftime('%S')) % 2 == 0:
-            logging.info(f"Image Log saved {curr_time}")
-            cv2.imwrite(f"media/live_proctor_log_images/{username}.png", image)
-            proctoring_log = ProctoringLog()
-            proctoring_log.test_id = test_id
-            proctoring_log.flag = "person on in window or any other flag"
-            proctoring_log.student_id = username
-            with open(f'media/live_proctor_log_images/{username}.png', 'rb') as destination_file:
-                proctoring_log.image.save(f"{curr_time}.jpg", File(destination_file))
-            proctoring_log.save()
-            event_triger()
-
-            violate = True
-            count = 0
-        count += 1
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-    return image, violate, count
-
-
-def get_results(frame, count, username, test_id):
-    frame, violate, count = get_result(username=username, image=frame, count=count, test_id=test_id)
-    return violate, frame, count
-
-
-import base64
-
+#
+# def video_stream(request):
+#     return StreamingHttpResponse(gen(VideoCamera(), request.user.username, request.session['test_id']),
+#                                  content_type='multipart/x-mixed-replace; boundary=frame')
+#
+#
+# def gen(camera, username, test_id):
+#     count = 0
+#     while True:
+#         frame = camera.get_frame()
+#         # print(org_frame.shape)
+#         flag, frame, count = get_results(frame, count, username, test_id)
+#         if flag:
+#             frame = cv2.copyMakeBorder(frame, 20, 20, 20, 20, cv2.BORDER_CONSTANT, value=[0, 0, 255])
+#         frame_flip = cv2.flip(frame, 1)
+#         ret, frame = cv2.imencode('.jpg', frame_flip)
+#
+#         yield (b'--frame\r\n'
+#                b'Content-Type: image/jpeg\r\n\r\n' + frame.tobytes() + b'\r\n\r\n')
+#
+#
+# def get_result(username, image, count, test_id):
+#     violate = False
+#     image.flags.writeable = False
+#     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+#     results = face_detection.process(image)
+#
+#     if type(results.detections) == type(None) or len(results.detections) != 1:  # or yl:
+#         now = datetime.now()
+#         curr_time = now.strftime("%H_%M_%S")
+#         if count > 10 and int(datetime.now().strftime('%S')) % 2 == 0:
+#             logging.info(f"Image Log saved {curr_time}")
+#             cv2.imwrite(f"media/live_proctor_log_images/{username}.png", image)
+#             proctoring_log = ProctoringLog()
+#             proctoring_log.test_id = test_id
+#             proctoring_log.flag = "person on in window or any other flag"
+#             proctoring_log.student_id = username
+#             with open(f'media/live_proctor_log_images/{username}.png', 'rb') as destination_file:
+#                 proctoring_log.image.save(f"{curr_time}.jpg", File(destination_file))
+#             proctoring_log.save()
+#             event_triger()
+#
+#             violate = True
+#             count = 0
+#         count += 1
+#     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+#
+#     return image, violate, count
+#
+#
+# def get_results(frame, count, username, test_id):
+#     frame, violate, count = get_result(username=username, image=frame, count=count, test_id=test_id)
+#     return violate, frame, count
+#
 
 def save_proctor_log(request):
     if request.method == 'POST':

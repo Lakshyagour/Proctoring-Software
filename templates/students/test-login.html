@@ -1,14 +1,15 @@
-{% extends 'students/dashboard.html' %}
-{% block body %}
+{% extends 'students/base.html' %}
+{% block test_login %}
 {% if messages %}
+
 <ul class="messages">
     {% for message in messages %}
     <li style="color : red" >{{ message }}</li>
     {% endfor %}
 </ul>
 {% endif %}
-<h3>Sign In</h3>
-        <form action="test-login" method ='post'>
+<h3>Test Login</h3>
+        <form action="test-login" method ='POST'>
         {% csrf_token %}
             <label for="test_id">Test Id</label>
             <input type="text" id='test_id' name='test_id' placeholder="Enter test id" Required>

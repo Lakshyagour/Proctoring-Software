@@ -154,8 +154,8 @@ def view_live_tests_logs(request):
     tests = TeacherTestJoin.objects.filter(teacher_id=request.user.username)
     if request.method == 'POST':
         test_id = request.POST['test_id']
-        context = {"tests": tests,"room_name": test_id}
+        context = {"tests": tests, "room_name": test_id}
         return render(request, "teachers/view-live-proctor-logs.html", context=context)
 
     context = {"tests": tests}
-    return render(request, 'teachers/view-live-proctor-logs.html',context=context)
+    return render(request, 'teachers/view-live-proctor-logs.html', context=context)

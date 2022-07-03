@@ -1,12 +1,6 @@
 {% extends 'teachers/base.html' %}
 {% block view_logs %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+
 <form action="view-tests-logs" method="POST">
 {% csrf_token %}
     <select id = "test_id" name = "test_id">
@@ -27,8 +21,6 @@
     <h4 style="display:inline-block; ">{{ log.flag }}</h4>
     <img src="{{ log.image.url }}" style = "width:150px ; height:150px">
 </div>
-
 {% endfor %}
-</body>
-</html>
-{ % endblock %}
+
+{% endblock %}
