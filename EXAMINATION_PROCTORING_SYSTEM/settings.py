@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-CSRF_TRUSTED_ORIGINS = ['https://205c-2405-201-680c-1099-f54d-42fa-e3c5-8892.in.ngrok.io']
+CSRF_TRUSTED_ORIGINS = ['https://beba-139-167-229-167.in.ngrok.io']
 
 # Application definition
 
@@ -55,7 +55,7 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'DEBUG',
+        'level': 'INFO',
     },
 }
 MIDDLEWARE = [
@@ -154,3 +154,4 @@ CHANNEL_LAYERS = {
         },
     },
 }
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000

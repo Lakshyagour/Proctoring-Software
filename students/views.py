@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+import datetime as dt
 from django.http import HttpResponse
 import cv2
 import mediapipe
@@ -84,12 +85,23 @@ def test_login(request):
             messages.error(request, "Bad Image Credentials")
             return render(request, 'students/test-login.html')
         request.session['test_id'] = test_id
+        test_information = TestInformation.objects.filter(test_id=request.session['test_id'])
+        print(type(test_information[0].start_date))
+        test_start_date = dt.datetime.combine(test_information[0].start_date,test_information[0].start_time)
+        test_end_date = dt.datetime.combine(test_information[0].end_date,test_information[0].end_time)
+
+        # if datetime.now() < test_start_date:
+        #     messages.error(request, "Test not started yet!")
+        #     return render(request, 'students/test-login.html')
+        if datetime.now() > test_end_date:
+            messages.error(request, "Test has ended")
+            return render(request, 'students/test-login.html')
 
         student_id = request.user.username
         result = TestResult.objects.filter(test_id=test_id, student_id=student_id)
-        # if result:
-        #     messages.error(request, "Test already submitted")
-        #     return render(request, 'students/test-login.html')
+        if result:
+            messages.error(request, "Test already submitted")
+            return render(request, 'students/test-login.html')
 
         return redirect("give-test-objective")
     return render(request, 'students/test-login.html')
@@ -97,6 +109,7 @@ def test_login(request):
 
 @login_required
 def give_test_objective(request):
+    request.session['test_result_message'] = ''
     if request.method == "POST":
         marks = 0
         test_information = TestInformation.objects.filter(test_id=request.session['test_id'])
@@ -110,13 +123,15 @@ def give_test_objective(request):
             if ans == selected_option:
                 marks += question.marks
             else:
-                marks -= test_information[0].neg_mark
+                marks -= test_information[0].neg_mark / 100
+
         result = TestResult()
         result.test_id = request.session['test_id']
         result.student_id = request.user.username
         result.marks = marks
         result.save()
-        return redirect("test_result")
+        return redirect("test-result")
+
     objective_questions = TestObjective.objects.filter(test_id=request.session['test_id'])
     context = {"objective_questions": objective_questions, "test_id": request.session['test_id'],
                "username": request.user.username}
@@ -140,6 +155,7 @@ def give_test_subjective(request):
 @login_required
 def exam_history(request):
     return render(request, 'students/dashboard.html')
+
 
 #
 # def video_stream(request):
@@ -203,6 +219,7 @@ def save_proctor_log(request):
             curr_time = now.strftime("%H_%M_%S")
             username = request.POST['username']
             test_id = request.POST['test_id']
+            flag = request.POST['flag']
             image = request.POST['image']
 
             with open(f"media/live_proctor_log_images/{username}.png", "wb") as log_live:
@@ -210,7 +227,7 @@ def save_proctor_log(request):
 
             proctoring_log = ProctoringLog()
             proctoring_log.test_id = test_id
-            proctoring_log.flag = "person on in window or any other flag"
+            proctoring_log.flag = flag
             proctoring_log.student_id = username
             with open(f'media/live_proctor_log_images/{username}.png', 'rb') as destination_file:
                 proctoring_log.image.save(f"{curr_time}.jpg", File(destination_file))

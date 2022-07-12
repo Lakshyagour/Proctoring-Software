@@ -20,7 +20,8 @@ def create_test_objective(request):
         if form.is_valid():
             logging.info(form.cleaned_data)
 
-            test_id = generate_slug(1)
+            test_id = generate_slug(2)
+            test_id = test_id.replace("-","_")
             filestream = form.cleaned_data.get('doc')
             filestream.seek(0)
             df = pd.read_csv(filestream)
@@ -152,6 +153,7 @@ def view_tests_logs(request):
 
 def view_live_tests_logs(request):
     tests = TeacherTestJoin.objects.filter(teacher_id=request.user.username)
+
     if request.method == 'POST':
         test_id = request.POST['test_id']
         context = {"tests": tests, "room_name": test_id}

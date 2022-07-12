@@ -40,14 +40,15 @@
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             document.querySelector('#chat-log').value += (data.message + '\n');
-            console.log(data.image)
             var myImageElement = document.getElementById(data.id);
             if(myImageElement){
-            myImageElement.src = data.image;
+                if(data.image){
+            myImageElement.src = data.image;}
             }
             else {
             const image = document.createElement('img');
-            image.setAttribute('src',data.image);
+            if(data.image){
+            image.setAttribute('src',data.image);}
             image.setAttribute('id',data.id);
             image.setAttribute('height', 250);
             image.setAttribute('width', 250);

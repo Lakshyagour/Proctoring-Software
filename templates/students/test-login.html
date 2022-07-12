@@ -9,6 +9,15 @@
 </ul>
 {% endif %}
 <h3>Test Login</h3>
+{% if messages %}
+        {% for message in messages %}
+      <div class="alert alert-danger alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Info!</strong> {{message}}.
+      </div>
+       {% endfor %}
+    {% endif %}
+
         <form action="test-login" method ='POST'>
         {% csrf_token %}
             <label for="test_id">Test Id</label>
@@ -116,6 +125,5 @@
        startStreaming();
        captureSnapshot();
     }
-
 </script>
 {% endblock %}

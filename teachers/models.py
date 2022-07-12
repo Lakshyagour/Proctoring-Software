@@ -13,6 +13,9 @@ class TestObjective(models.Model):
     ans = models.CharField(max_length=1)
     marks = models.IntegerField()
 
+    def __str__(self):
+        return f"{self.test_id} {self.question_id}"
+
 
 class TestSubjective(models.Model):
     test_id = models.CharField(max_length=50)
@@ -20,6 +23,9 @@ class TestSubjective(models.Model):
     question_id = models.IntegerField()
     question = models.CharField(max_length=500)
     marks = models.CharField(max_length=500)
+
+    def __str__(self):
+        return f"{self.test_id}"
 
 
 class TeacherTestJoin(models.Model):
@@ -40,3 +46,6 @@ class TestInformation(models.Model):
     neg_mark = models.IntegerField(default=0)
     password = models.CharField(max_length=20, )
     proctor_type = models.CharField(max_length=1, choices=[('0', 'Automatic Monitoring'), ('1', 'Live Monitoring')])
+
+    def __str__(self):
+        return f"{self.test_id}"

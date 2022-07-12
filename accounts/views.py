@@ -23,6 +23,7 @@ def signup(request):
         pass1 = request.POST['pass1']
         pass2 = request.POST['pass2']
         user_image = request.POST["image_hidden"]
+        verifying_authority = request.POST["verifying_authority"]
 
         # user_image = np.frombuffer(base64.b64decode(user_image), np.uint8)
         # user_image = get_segmented_image(user_image)
@@ -35,7 +36,8 @@ def signup(request):
             message.error(request, "Password didn't match")
 
         user = UserProfile(username=username, email=email, password=pass1, user_image=user_image, first_name=first_name,
-                           last_name=last_name, role=role)
+                           last_name=last_name, role=role,verifying_authority = verifying_authority)
+        user.set_password(pass1)
         user.save()
         messages.success(request, "Your account has been successfully created")
         return redirect('signin')
@@ -52,11 +54,11 @@ def signin(request):
             messages.error(request, "User not found!")
             return render(request, "accounts/signin.html")
 
-        if password != UserProfile.objects.filter(username=username).values("password")[0]["password"]:
-            messages.error(request, "Password didn't match!")
+        user = UserProfile.objects.filter(username=username)[0]
+        if not user.verified:
+            messages.error(request, "User Not Verified Please Contact Administrator")
             return render(request, "accounts/signin.html")
 
-        user = UserProfile.objects.filter(username=username)[0]
         logging.info(f"Username:  {user.username}")
         imgdata1 = user.user_image
         imgdata2 = user_image
@@ -72,9 +74,13 @@ def signin(request):
         if not img_result["verified"]:
             messages.error(request, "Bad Image Credentials")
             return render(request, "accounts/signin.html")
-
-        login(request, user)
-        return HttpResponseRedirect('/')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect('/')
+        else:
+            messages.error(request, "Authentication Error Check Password !")
+            return render(request, "accounts/signin.html")
 
     return render(request, "accounts/signin.html")
 
@@ -93,3 +99,11 @@ def home(request):
     logging.debug(f"{user.role=} ")
     context = {"user": user}
     return render(request, 'home.html', context=context)
+
+
+def my_custom_page_not_found_view(request,error):
+    return render(request, '404.html')
+
+
+def my_custom_error_view(request):
+    return render(request, '500.html')

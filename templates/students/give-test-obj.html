@@ -19,7 +19,7 @@
 <input type="hidden" id="image_hidden" name="image_hidden" Required>
 
 
-<form action="give_test_objective" method="POST">
+<form action="give-test-objective" method="POST">
     {% csrf_token %}
     {% for question in objective_questions %}
     <div>
@@ -81,7 +81,7 @@ var imgData = results.image.toDataURL();
          url: '/students/save-proctor-log-to-media',
          type: 'POST',
          ContentType : 'application/json',
-         data: {'username': username,'test_id':test_id,csrfmiddlewaretoken: '{{ csrf_token }}','image': $('#image_hidden').val() }
+         data: {'username': username,'test_id':test_id,csrfmiddlewaretoken: '{{ csrf_token }}','image': $('#image_hidden').val(),'flag': violation_message}
        }).done(function(response){
          console.log(response);
        });
@@ -215,7 +215,16 @@ function startStreaming() {
        startStreaming();
   }
 
-
+document.addEventListener("visibilitychange", (event) => {
+  if (document.visibilityState == "visible") {
+    console.log("tab is active")
+  } else {
+    chatSocket.send(JSON.stringify({
+                'message': username+ ' '+ "User Switching Tabs",
+                'id':username
+       }));
+  }
+});
 
 </script>
 {% endblock %}
